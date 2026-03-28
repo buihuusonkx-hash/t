@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { PenSquare, FileText, Download, Plus, Trash2, ChevronRight, Sparkles, RefreshCw, CheckCircle, AlertCircle, Settings, X, Key, LogOut, BookOpen, Layout, ListChecks, FileJson } from 'lucide-react';
+import { PenSquare, FileText, Download, Plus, Trash2, ChevronRight, Sparkles, RefreshCw, CheckCircle, X, BookOpen, Layout, ListChecks, FileJson } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { pickNLCQuestion, pickDSQuestion, pickTLNQuestion, type DSQuestion } from './questionBank';
 import { findYeuCau, getAllTopics } from './yeuCauCanDat';
@@ -37,7 +37,7 @@ export default function App() {
   const [data, setData] = useState<any[]>([]);
   const [monHoc, setMonHoc] = useState('Toán');
 
-  // KhYi tạo
+  // Khởi tạo
   useEffect(() => {
     const saved = localStorage.getItem('mmp_data');
     if (saved) {
@@ -55,7 +55,7 @@ export default function App() {
     if (data.length > 0) localStorage.setItem('mmp_data', JSON.stringify(data));
   }, [data]);
 
-  // --- Logic Nghi?p vụ ---
+  // --- Logic Nghiệp vụ ---
   const countQuestions = (input: string) => {
     if (!input) return 0;
     return input.split(/[,;\s]+/).filter(s => s && /\d/.test(s)).length;
@@ -64,11 +64,11 @@ export default function App() {
   const getTotals = () => {
     let p1 = 0, p2 = 0, p3 = 0;
     data.forEach(c => c.noiDungs.forEach((nd: any) => {
-      // NLC: T.ng từ NB, TH, VD
+      // NLC: Tổng từ NB, TH, VD
       p1 += countQuestions(nd.mucDos[0].qs.nlc) + countQuestions(nd.mucDos[1].qs.nlc) + countQuestions(nd.mucDos[2].qs.nlc);
-      // DS: Đếm s' câu (m-i câu 4 ý)
+      // DS: Đếm số câu (mỗi câu 4 ý)
       p2 += countQuestions(nd.mucDos[0].qs.ds);
-      // TLN: T.ng từ TH, VD, VDC
+      // TLN: Tổng từ TH, VD, VDC
       p3 += countQuestions(nd.mucDos[1].qs.tln) + countQuestions(nd.mucDos[2].qs.tln) + countQuestions(nd.mucDos[3].qs.tln);
     }));
     return { p1, p2, p3, total: p1 + p2 + p3 };
@@ -78,7 +78,7 @@ export default function App() {
     const newData = JSON.parse(JSON.stringify(data));
     const allItems: any[] = [];
     
-    // Gom tất cả các 'ơn v< kiến thức vào mTt danh sách phẳng
+    // Gom tất cả các đơn vị kiến thức vào một danh sách phẳng
     newData.forEach((c: any, cIdx: number) => {
       c.noiDungs.forEach((nd: any, nIdx: number) => {
         allItems.push({ cIdx, nIdx, soTiet: nd.soTiet || 0, ten: nd.tenNoiDung });
@@ -86,15 +86,15 @@ export default function App() {
     });
 
     const totalTiet = allItems.reduce((acc: number, it: any) => acc + it.soTiet, 0);
-    if (totalTiet === 0) return alert("Vui lòng nhập 'S' tiết' 'f tính toán!");
+    if (totalTiet === 0) return alert("Vui lòng nhập 'Số tiết' để tính toán!");
 
-    // Reset toàn bT dữ li?u câu hỏi cũ
+    // Reset toàn bộ dữ liệu câu hỏi cũ
     allItems.forEach((item: any) => {
       const nd = newData[item.cIdx].noiDungs[item.nIdx];
       nd.mucDos.forEach((m: any) => { m.qs.nlc = ''; m.qs.ds = ''; m.qs.tln = ''; });
     });
 
-    // Hàm b. trợ phân ph'i s' câu dựa trên tỷ l? s' tiết (Largest Remainder Method)
+    // Hàm bổ trợ phân phối số câu dựa trên tỷ lệ số tiết (Largest Remainder Method)
     const distribute = (totalTarget: number) => {
       const exact = allItems.map((it: any) => (it.soTiet / totalTiet) * totalTarget);
       const fl = exact.map((v: number) => Math.floor(v));
@@ -104,24 +104,24 @@ export default function App() {
       return fl;
     };
 
-    // 1. Phân b. Đúng/Sai (T.ng 4 câu)
+    // 1. Phân bổ Đúng/Sai (Tổng 4 câu)
     const allocDS = distribute(4);
     
-    // 2. Phân b. Trả lời ngắn (T.ng 6 câu: 2 TH - 2 VD - 2 VDC)
+    // 2. Phân bổ Trả lời ngắn (Tổng 6 câu: 2 TH - 2 VD - 2 VDC)
     const allocTLN_TH = distribute(2);
     const allocTLN_VD = distribute(2);
     const allocTLN_VDC = distribute(2);
 
-    // 3. Phân b. Trắc nghi?m NLC (T.ng 12 câu: Chia mức NB và TH, bỏ VD)
+    // 3. Phân bổ Trắc nghiệm NLC (Tổng 12 câu: Chia mức NB và TH, bỏ VD)
     // Ưu tiên cấp 1 câu NLC cho các dòng chưa có câu DS hoặc TLN nào
     let nlcIdx = 1, dsIdx = 1, tlnIdx = 1;
     const allocNLC_Total = distribute(12);
 
-    // --- THỰC HI?N ĐI?N DỮ LI?U ---
+    // --- THỰC HIỆN ĐIỀN DỮ LIỆU ---
     allItems.forEach((item: any, idx: number) => {
       const nd = newData[item.cIdx].noiDungs[item.nIdx];
 
-      // Gán Đúng/Sai (vào mức 0 - NB, trong ma trận sẽ tự hifu cấu trúc 1NB-2TH-1VD)
+      // Gán Đúng/Sai (vào mức 0 - NB, trong ma trận sẽ tự hiểu cấu trúc 1NB-2TH-1VD)
       for (let k = 0; k < allocDS[idx]; k++) {
         nd.mucDos[0].qs.ds += (nd.mucDos[0].qs.ds ? ', ' : '') + (dsIdx++);
       }
@@ -137,7 +137,7 @@ export default function App() {
         nd.mucDos[3].qs.tln += (nd.mucDos[3].qs.tln ? ', ' : '') + (tlnIdx++);
       }
 
-      // Gán Trắc nghi?m NLC (Chia 60% NB - 40% TH)
+      // Gán Trắc nghiệm NLC (Chia 60% NB - 40% TH)
       const nNLC = allocNLC_Total[idx];
       const nNB = Math.ceil(nNLC * 0.6);
       const nTH = nNLC - nNB;
@@ -150,15 +150,15 @@ export default function App() {
       }
     });
 
-    // --- BƯsC CUỐI: KI,M TRA PHỦ KÍN ---
-    // Nếu vẫn còn dòng nào "trắng" câu hỏi, lấy 1 câu NLC từ dòng nhiều nhất chuyfn sang
+    // --- BƯỚC CUỐI: KIỂM TRA PHỦ KÍN ---
+    // Nếu vẫn còn dòng nào "trắng" câu hỏi, lấy 1 câu NLC từ dòng nhiều nhất chuyển sang
     allItems.forEach((item: any) => {
       const nd = newData[item.cIdx].noiDungs[item.nIdx];
       const totalQ = (nd.mucDos[0].qs.nlc + nd.mucDos[1].qs.nlc + nd.mucDos[0].qs.ds + nd.mucDos[1].qs.tln).length;
       
       if (totalQ === 0) {
-        // Cấp "vé v>t" 1 câu NLC Nhận biết cho dòng b< tr'ng
-        nd.mucDos[0].qs.nlc = "B. sung"; 
+        // Cấp "vé vớt" 1 câu NLC Nhận biết cho dòng bị trống
+        nd.mucDos[0].qs.nlc = "Bổ sung"; 
       }
     });
 
@@ -169,7 +169,7 @@ export default function App() {
     const newData = JSON.parse(JSON.stringify(data));
     const allItems: any[] = [];
     
-    // 1. Thu thập tất cả nTi dung vào danh sách phẳng
+    // 1. Thu thập tất cả nội dung vào danh sách phẳng
     newData.forEach((c: any, cIdx: number) => {
       c.noiDungs.forEach((nd: any, nIdx: number) => {
         allItems.push({ 
@@ -181,10 +181,10 @@ export default function App() {
       });
     });
 
-    // 2. Sắp xếp nTi dung theo S' tiết giảm dần (Chương quan trọng 'ứng trư>c)
+    // 2. Sắp xếp nội dung theo Số tiết giảm dần (Chương quan trọng đứng trước)
     allItems.sort((a: any, b: any) => b.soTiet - a.soTiet);
 
-    // 3. Reset toàn bT s' câu TLN cũ
+    // 3. Reset toàn bộ số câu TLN cũ
     allItems.forEach((item: any) => {
       const nd = newData[item.cIdx].noiDungs[item.nIdx];
       nd.mucDos[1].qs.tln = ''; // TH
@@ -192,7 +192,7 @@ export default function App() {
       nd.mucDos[3].qs.tln = ''; // VDC
     });
 
-    // 4. Đ<nh nghĩa 6 "v< trí" câu TLN cần phân b.
+    // 4. Định nghĩa 6 "vị trí" câu TLN cần phân bổ
     // Mục tiêu: 2 câu TH, 2 câu VD, 2 câu VDC
     const slots = [
       { level: 1, label: 'TH' },  // Câu 17
@@ -204,7 +204,7 @@ export default function App() {
     ];
 
     // 5. Thuật toán phân rải: 
-    // M-i nTi dung sẽ ch? nhận TỐI ĐA 1 câu TLN cho 'ến khi hết vòng.
+    // Mỗi nội dung sẽ chỉ nhận TỐI ĐA 1 câu TLN cho đến khi hết vòng.
     let tlnCounter = 17; 
     slots.forEach((slot, index) => {
       const itemIdx = index % allItems.length; 
@@ -239,7 +239,7 @@ export default function App() {
       <div className="flex justify-center gap-2 mb-8 sticky top-4 z-50">
         <div className="bg-white/80 backdrop-blur-md p-1.5 rounded-full border border-slate-200 shadow-xl flex gap-1">
           {[
-            { id: 'nhap-lieu', label: 'Nhập li?u', icon: PenSquare, step: 1 },
+            { id: 'nhap-lieu', label: 'Nhập liệu', icon: PenSquare, step: 1 },
             { id: 'ma-tran', label: 'Ma trận', icon: Layout, step: 2 },
             { id: 'dac-ta', label: 'Ma trận 'ặc tả', icon: ListChecks, step: 3 },
             { id: 'tao-de', label: 'Tạo 'ề', icon: FileJson, step: 4 }
@@ -262,7 +262,7 @@ export default function App() {
                 <tab.icon className="w-4 h-4" />
                 {tab.label}
               </button>
-              {idx < arr.length - 1 && <span className="flex items-center text-slate-200 text-xs px-1">?</span>}
+              {idx < arr.length - 1 && <span className="flex items-center text-slate-200 text-xs px-1">›</span>}
             </>
           ))}
         </div>
@@ -342,7 +342,7 @@ function TabNhapLieu({ data, setData, tuDongPhanBo, tuDongPhanBoMoi, addChuong, 
             <BookOpen className="text-indigo-600" />
             Cấu trúc 'ề thi
           </h2>
-          <p className="text-xs text-slate-400 mt-1">Xây dựng nTi dung kiến thức và phân b. câu hỏi</p>
+          <p className="text-xs text-slate-400 mt-1">Xây dựng nội dung kiến thức và phân bổ câu hỏi</p>
         </div>
         <div className="flex gap-3">
           <button onClick={addChuong} className="px-4 py-2 border border-slate-200 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-slate-50 transition-all">
@@ -392,7 +392,7 @@ function TabNhapLieu({ data, setData, tuDongPhanBo, tuDongPhanBoMoi, addChuong, 
 
                 <div className="flex gap-4 mb-6">
                   <div className="flex-[3] relative">
-                    <label className="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">NTi dung bài học</label>
+                    <label className="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Nội dung bài học</label>
                     <input 
                       className="w-full p-3 rounded-xl border border-slate-200 font-semibold bg-white" 
                       placeholder="Tên bài học/nTi dung (VD: Tính 'ơn 'i?u của hàm s')" 
@@ -406,11 +406,11 @@ function TabNhapLieu({ data, setData, tuDongPhanBo, tuDongPhanBoMoi, addChuong, 
                       ))}
                     </datalist>
                     {nd.tenNoiDung && findYeuCau(nd.tenNoiDung) && (
-                      <span className="absolute right-3 top-8 text-emerald-500 text-[9px] font-bold">o" Đã tìm thấy YCCĐ</span>
+                      <span className="absolute right-3 top-8 text-emerald-500 text-[9px] font-bold">✓ Đã tìm thấy YCCĐ</span>
                     )}
                   </div>
                   <div className="flex-1">
-                    <label className="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1 text-center">S' tiết</label>
+                    <label className="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1 text-center">Số tiết</label>
                     <input className="w-full p-3 rounded-xl border border-slate-200 text-center font-black bg-white" type="number" placeholder="0" value={nd.soTiet || ''} onChange={e => updateNoiDung(cIdx, nIdx, { soTiet: parseInt(e.target.value) || 0 })} />
                   </div>
                 </div>
@@ -473,7 +473,7 @@ function TabNhapLieu({ data, setData, tuDongPhanBo, tuDongPhanBoMoi, addChuong, 
               onClick={() => addNoiDung(cIdx)}
               className="ml-6 w-[calc(100%-1.5rem)] py-3 border-2 border-dashed border-slate-200 rounded-2xl text-slate-400 font-bold text-sm hover:border-indigo-300 hover:text-indigo-500 hover:bg-indigo-50/30 transition-all flex items-center justify-center gap-2"
             >
-              <Plus className="w-4 h-4" /> Thêm nTi dung bài học
+              <Plus className="w-4 h-4" /> Thêm nội dung bài học
             </button>
           </div>
         </div>
@@ -501,8 +501,8 @@ function TabMaTran({ data, monHoc, countQuestions, totals, onPrev, onNext }: any
       className="bg-white p-10 rounded-3xl border border-slate-200 shadow-xl overflow-x-auto"
     >
       <div className="text-center mb-10">
-        <h2 className="text-2xl font-black uppercase tracking-tight">MA TRẬN Đ? KI,M TRA ĐSNH KỲ</h2>
-        <p className="text-slate-500 font-bold mt-1">M"N: {monHoc.toUpperCase()} - LsP 12</p>
+        <h2 className="text-2xl font-black uppercase tracking-tight">MA TRẬN ĐỀ KIỂM TRA ĐỊNH KỲ</h2>
+        <p className="text-slate-500 font-bold mt-1">MÔN: {monHoc.toUpperCase()} - LỚP 12</p>
         <div className="w-20 h-1 bg-indigo-600 mx-auto mt-4 rounded-full"></div>
       </div>
 
@@ -510,12 +510,12 @@ function TabMaTran({ data, monHoc, countQuestions, totals, onPrev, onNext }: any
         <thead>
           <tr className="bg-slate-900 text-white text-center">
             <th className="border border-slate-700 p-3" rowSpan={3}>STT</th>
-            <th className="border border-slate-700 p-3" rowSpan={3}>NTi dung kiến thức</th>
-            <th className="border border-slate-700 p-3" rowSpan={3}>S' tiết</th>
-            <th className="border border-slate-700 p-3" colSpan={3}>Trắc nghi?m (12 câu)</th>
+            <th className="border border-slate-700 p-3" rowSpan={3}>Nội dung kiến thức</th>
+            <th className="border border-slate-700 p-3" rowSpan={3}>Số tiết</th>
+            <th className="border border-slate-700 p-3" colSpan={3}>Trắc nghiệm (12 câu)</th>
             <th className="border border-slate-700 p-3" colSpan={3}>Đúng/Sai (4 câu)</th>
             <th className="border border-slate-700 p-3" colSpan={3}>Trả lời ngắn (6 câu)</th>
-            <th className="border border-slate-700 p-3" rowSpan={3}>T.ng</th>
+            <th className="border border-slate-700 p-3" rowSpan={3}>Tổng</th>
           </tr>
           <tr className="bg-slate-800 text-white">
             <th className="border border-slate-600 p-2 bg-emerald-900/50">NB</th>
@@ -554,7 +554,7 @@ function TabMaTran({ data, monHoc, countQuestions, totals, onPrev, onNext }: any
             );
           }))}
           <tr className="bg-slate-900 text-white font-black text-center">
-            <td colSpan={3} className="p-4">T"NG C~NG</td>
+            <td colSpan={3} className="p-4">TỔNG CỘNG</td>
             <td colSpan={3} className="bg-emerald-900/30">{totals.p1}/12 câu</td>
             <td colSpan={3} className="bg-amber-900/30">{totals.p2}/4 câu</td>
             <td colSpan={3} className="bg-rose-900/30">{totals.p3}/6 câu</td>
@@ -566,22 +566,22 @@ function TabMaTran({ data, monHoc, countQuestions, totals, onPrev, onNext }: any
       <div className="mt-8 grid grid-cols-3 gap-6">
         <div className="p-6 bg-emerald-50 rounded-2xl border border-emerald-100">
           <p className="text-[10px] font-black text-emerald-600 uppercase mb-1">Phần I (NLC)</p>
-          <p className="text-2xl font-black text-emerald-900">{Math.round((totals.p1/22)*100)}% <span className="text-sm font-normal text-emerald-600">t.ng s' câu</span></p>
+          <p className="text-2xl font-black text-emerald-900">{Math.round((totals.p1/22)*100)}% <span className="text-sm font-normal text-emerald-600">tổng số câu</span></p>
         </div>
         <div className="p-6 bg-amber-50 rounded-2xl border border-amber-100">
           <p className="text-[10px] font-black text-amber-600 uppercase mb-1">Phần II (Đúng/Sai)</p>
-          <p className="text-2xl font-black text-amber-900">{Math.round((totals.p2/22)*100)}% <span className="text-sm font-normal text-amber-600">t.ng s' câu</span></p>
+          <p className="text-2xl font-black text-amber-900">{Math.round((totals.p2/22)*100)}% <span className="text-sm font-normal text-amber-600">tổng số câu</span></p>
         </div>
         <div className="p-6 bg-rose-50 rounded-2xl border border-rose-100">
           <p className="text-[10px] font-black text-rose-600 uppercase mb-1">Phần III (TL Ngắn)</p>
-          <p className="text-2xl font-black text-rose-900">{Math.round((totals.p3/22)*100)}% <span className="text-sm font-normal text-rose-600">t.ng s' câu</span></p>
+          <p className="text-2xl font-black text-rose-900">{Math.round((totals.p3/22)*100)}% <span className="text-sm font-normal text-rose-600">tổng số câu</span></p>
         </div>
       </div>
 
       {/* Nút 'iều hư>ng */}
       <div className="flex justify-between mt-6">
         <button onClick={onPrev} className="flex items-center gap-2 px-6 py-2.5 border border-slate-200 rounded-2xl font-bold text-sm hover:bg-slate-50 transition-all text-slate-600">
-          ? Nhập li?u
+          ◂ Nhập liệu
         </button>
         <div className="flex gap-3">
           <button
@@ -617,8 +617,8 @@ function TabDacTa({ data, countQuestions, onPrev, onNext }: any) {
       className="bg-white p-10 rounded-3xl border border-slate-200 shadow-xl overflow-x-auto"
     >
       <div className="text-center mb-10">
-        <h2 className="text-2xl font-black uppercase tracking-tight">BẢNG MA TRẬN ĐẶC TẢ CHI TIẾT Đ? KI,M TRA</h2>
-        <p className="text-slate-500 font-bold mt-1">HƯsNG DẪN CHẤM V? ĐÁNH GIÁ N,NG LỰC</p>
+        <h2 className="text-2xl font-black uppercase tracking-tight">BẢNG MA TRẬN ĐẶC TẢ CHI TIẾT ĐỀ KIỂM TRA</h2>
+        <p className="text-slate-500 font-bold mt-1">HƯỚNG DẪN CHẤM VÀ ĐÁNH GIÁ NĂNG LỰC</p>
         <div className="w-20 h-1 bg-indigo-600 mx-auto mt-4 rounded-full"></div>
         <div className="mt-4 flex justify-center gap-4 text-[10px]">
           <span className="flex items-center gap-1.5 text-slate-600">
@@ -634,7 +634,7 @@ function TabDacTa({ data, countQuestions, onPrev, onNext }: any) {
         <thead>
           <tr className="bg-slate-900 text-white">
             <th className="border border-slate-700 p-3 w-12 text-center">STT</th>
-            <th className="border border-slate-700 p-3 w-48">NTi dung</th>
+            <th className="border border-slate-700 p-3 w-48">Nội dung</th>
             <th className="border border-slate-700 p-3 w-28 text-center">Mức 'T</th>
             <th className="border border-slate-700 p-3">Yêu cầu cần 'ạt</th>
             <th className="border border-slate-700 p-3 w-20 text-center">NLC</th>
@@ -671,7 +671,7 @@ function TabDacTa({ data, countQuestions, onPrev, onNext }: any) {
       {/* Nút 'iều hư>ng */}
       <div className="flex justify-between mt-6">
         <button onClick={onPrev} className="flex items-center gap-2 px-6 py-2.5 border border-slate-200 rounded-2xl font-bold text-sm hover:bg-slate-50 transition-all text-slate-600">
-          ? Ma trận
+          ◂ Ma trận
         </button>
         <button onClick={onNext} className="flex items-center gap-2 px-8 py-3 bg-indigo-600 text-white rounded-2xl font-black hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100 text-sm">
           Tạo 'ề thi <ChevronRight className="w-5 h-5" />
@@ -688,7 +688,7 @@ function TabTaoDe({ data, countQuestions, onPrev, monHoc = 'Toán' }: any) {
   // Hàm sinh 'ề dựa trên dữ li?u từ Ma trận 'ặc tả
   const handleGenerateExam = () => {
 
-    let globalStt = 1; // S' thứ tự câu hỏi xuyên su't
+    let globalStt = 1; // Số thứ tự câu hỏi xuyên suốt
 
     // Tách thành 3 danh sách tạm thời cho 3 phần theo chuẩn 2026
     const part1_NLC: any[] = [];
@@ -698,7 +698,7 @@ function TabTaoDe({ data, countQuestions, onPrev, monHoc = 'Toán' }: any) {
     // Duy?t qua toàn bT dữ li?u người dùng 'ã nhập
     data.forEach((chuong: any) => {
       chuong.noiDungs.forEach((nd: any) => {
-        // --- PHẦN I: TRẮC NGHI?M NHI?U PHƯƠNG ÁN (NLC) ---
+        // --- PHẦN I: TRẮC NGHIỆM NHIỀU PHƯƠNG ÁN (NLC) ---
         nd.mucDos.forEach((md: any, mIdx: number) => {
           const numQ = countQuestions(md.qs.nlc);
           const mucDoTen = LEVELS[mIdx].name;
@@ -716,7 +716,7 @@ function TabTaoDe({ data, countQuestions, onPrev, monHoc = 'Toán' }: any) {
           }
         });
 
-        // --- PHẦN II: TRẮC NGHI?M ĐsNG/SAI (DS) ---
+        // --- PHẦN II: TRẮC NGHIỆM ĐÚNG/SAI (DS) ---
         const numDS = countQuestions(nd.mucDos[0].qs.ds);
         for (let i = 0; i < numDS; i++) {
           const qDS = pickDSQuestion(nd.tenNoiDung);
@@ -730,7 +730,7 @@ function TabTaoDe({ data, countQuestions, onPrev, monHoc = 'Toán' }: any) {
           });
         }
 
-        // --- PHẦN III: TRẢ LoI NGẮN (TLN) ---
+        // --- PHẦN III: TRẢ LỜI NGẮN (TLN) ---
         nd.mucDos.forEach((md: any, mIdx: number) => {
           const numTLN = countQuestions(md.qs.tln);
           const mucDoTen = LEVELS[mIdx].name;
@@ -750,7 +750,7 @@ function TabTaoDe({ data, countQuestions, onPrev, monHoc = 'Toán' }: any) {
       });
     });
 
-    // GTp các phần lại và cập nhật state
+    // Gộp các phần lại và cập nhật state
     setExam([...part1_NLC, ...part2_DS, ...part3_TLN]);
   };
 
@@ -778,7 +778,7 @@ function TabTaoDe({ data, countQuestions, onPrev, monHoc = 'Toán' }: any) {
             onClick={handleGenerateExam}
             className="bg-indigo-600 text-white px-8 py-3 rounded-xl font-black hover:bg-indigo-700 transition-all flex items-center gap-2 shadow-xl"
           >
-            <RefreshCw className="w-5 h-5" /> TẠO Đ? THEO ĐẶC TẢ
+            <RefreshCw className="w-5 h-5" /> TẠO ĐỀ THEO ĐẶC TẢ
           </button>
         </div>
       </div>
@@ -797,7 +797,7 @@ function TabTaoDe({ data, countQuestions, onPrev, monHoc = 'Toán' }: any) {
 
       <div className="flex justify-between mt-6">
         <button onClick={onPrev} className="flex items-center gap-2 px-6 py-2.5 border border-slate-200 rounded-2xl font-bold text-sm text-slate-600">
-          ? Quay lại Đặc tả
+          ◂ Quay lại Đặc tả
         </button>
       </div>
     </div>
@@ -815,7 +815,7 @@ function ExamContent({ exam }: { exam: any[] }) {
         <section className="mb-10">
           <h4 className="font-bold mb-4 flex items-center gap-2 text-base">
             <span className="bg-slate-900 text-white px-3 py-1 rounded-lg text-xs">PHẦN I</span>
-            Câu trắc nghi?m nhiều phương án lựa chọn.
+            Câu trắc nghiệm nhiều phương án lựa chọn.
           </h4>
           {p1.map(q => (
             <div key={q.id} className="mb-6 group">
@@ -865,7 +865,7 @@ function ExamContent({ exam }: { exam: any[] }) {
         <section>
           <h4 className="font-bold mb-4 flex items-center gap-2 text-base">
             <span className="bg-slate-900 text-white px-3 py-1 rounded-lg text-xs">PHẦN III</span>
-            Câu trắc nghi?m trả lời ngắn.
+            Câu trắc nghiệm trả lời ngắn.
           </h4>
           <div className="grid grid-cols-1 gap-6">
             {p3.map(q => (
@@ -885,7 +885,7 @@ function ExamContent({ exam }: { exam: any[] }) {
     </div>
   );
 }
-// --- Các Component giao di?n nhỏ ---
+// --- Các Component giao diện nhỏ ---
 
 function Header({ monHoc, setMonHoc }: any) {
   return (
@@ -924,29 +924,5 @@ function Header({ monHoc, setMonHoc }: any) {
         </div>
       </div>
     </header>
-  );
-            <motion.p 
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="text-rose-400 text-[10px] font-bold text-center flex items-center justify-center gap-1"
-            >
-              <AlertCircle className="w-3 h-3" />
-              {error}
-            </motion.p>
-          )}
-
-          <button 
-            onClick={onLogin} 
-            className="w-full py-4 bg-indigo-500 text-white rounded-2xl font-black hover:bg-indigo-600 transition-all shadow-xl shadow-indigo-500/20 mt-4 active:scale-95"
-          >
-            ĐĂNG NHẬP HỆ THỐNG
-          </button>
-        </div>
-
-        <div className="mt-8 text-center">
-          <p className="text-slate-500 text-[10px] font-bold uppercase tracking-tighter">Bản quyền thuộc về Smarter Education Tools © 2026</p>
-        </div>
-      </motion.div>
-    </div>
   );
 }
