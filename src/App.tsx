@@ -241,8 +241,8 @@ export default function App() {
           {[
             { id: 'nhap-lieu', label: 'Nhập liệu', icon: PenSquare, step: 1 },
             { id: 'ma-tran', label: 'Ma trận', icon: Layout, step: 2 },
-            { id: 'dac-ta', label: 'Ma trận 'ặc tả', icon: ListChecks, step: 3 },
-            { id: 'tao-de', label: 'Tạo 'ề', icon: FileJson, step: 4 }
+            { id: 'dac-ta', label: 'Ma trận đặc tả', icon: ListChecks, step: 3 },
+            { id: 'tao-de', label: 'Tạo đề', icon: FileJson, step: 4 }
           ].map((tab, idx, arr) => (
             <>
               <button
@@ -298,7 +298,7 @@ function TabNhapLieu({ data, setData, tuDongPhanBo, tuDongPhanBoMoi, addChuong, 
     const newData = [...data];
     newData[cIdx].noiDungs[nIdx] = { ...newData[cIdx].noiDungs[nIdx], ...val };
     
-    // Auto-fill yêu cầu cần 'ạt khi thay '.i tên bài học
+    // Auto-fill yêu cầu cần đạt khi thay đổi tên bài học
     if (val.tenNoiDung !== undefined) {
       const yeuCau = findYeuCau(val.tenNoiDung);
       if (yeuCau) {
@@ -340,7 +340,7 @@ function TabNhapLieu({ data, setData, tuDongPhanBo, tuDongPhanBoMoi, addChuong, 
         <div>
           <h2 className="text-xl font-black flex items-center gap-2">
             <BookOpen className="text-indigo-600" />
-            Cấu trúc 'ề thi
+            Cấu trúc đề thi
           </h2>
           <p className="text-xs text-slate-400 mt-1">Xây dựng nội dung kiến thức và phân bổ câu hỏi</p>
         </div>
@@ -349,10 +349,10 @@ function TabNhapLieu({ data, setData, tuDongPhanBo, tuDongPhanBoMoi, addChuong, 
             <Plus className="w-4 h-4" /> Thêm chương
           </button>
           <button onClick={tuDongPhanBo} className="px-6 py-2 bg-indigo-600 text-white rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100">
-            <Sparkles className="w-4 h-4" /> Tự 'Tng phân b. (Chuẩn 2026)
+            <Sparkles className="w-4 h-4" /> Tự động phân bổ (Chuẩn 2026)
           </button>
           <button onClick={tuDongPhanBoMoi} className="px-6 py-2 bg-emerald-600 text-white rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-100">
-            <RefreshCw className="w-4 h-4" /> Phân b. TLN (Rải 'ều)
+            <RefreshCw className="w-4 h-4" /> Phân bổ TLN (Rải đều)
           </button>
         </div>
       </div>
@@ -372,7 +372,7 @@ function TabNhapLieu({ data, setData, tuDongPhanBo, tuDongPhanBoMoi, addChuong, 
             </div>
             <input 
               className="flex-1 text-lg font-bold p-2 bg-slate-50 rounded-lg border-none focus:ring-2 focus:ring-indigo-500 placeholder:text-slate-300" 
-              placeholder="Tên chương/chủ 'ề (ví dụ: Chương I. Ứng dụng 'ạo hàm...)" 
+              placeholder="Tên chương/chủ đề (ví dụ: Chương I. Ứng dụng đạo hàm...)" 
               value={chuong.tenChuong} 
               onChange={e => {
                 const newData = [...data]; newData[cIdx].tenChuong = e.target.value; setData(newData);
@@ -395,7 +395,7 @@ function TabNhapLieu({ data, setData, tuDongPhanBo, tuDongPhanBoMoi, addChuong, 
                     <label className="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Nội dung bài học</label>
                     <input 
                       className="w-full p-3 rounded-xl border border-slate-200 font-semibold bg-white" 
-                      placeholder="Tên bài học/nTi dung (VD: Tính 'ơn 'i?u của hàm s')" 
+                      placeholder="Tên bài học/nội dung (VD: Tính đơn điệu của hàm số)" 
                       value={nd.tenNoiDung} 
                       onChange={e => updateNoiDung(cIdx, nIdx, { tenNoiDung: e.target.value })} 
                       list={`topics-${cIdx}-${nIdx}`}
@@ -425,7 +425,7 @@ function TabNhapLieu({ data, setData, tuDongPhanBo, tuDongPhanBoMoi, addChuong, 
                       
                       <div className="space-y-2">
                         <div>
-                          <label className="text-[9px] font-bold text-slate-400 uppercase block mb-1">Yêu cầu cần 'ạt</label>
+                          <label className="text-[9px] font-bold text-slate-400 uppercase block mb-1">Yêu cầu cần đạt</label>
                           <textarea 
                             className="w-full p-2 text-[10px] rounded-lg border-none bg-white/70 focus:bg-white transition-all h-20 resize-none" 
                             placeholder="Mô tả yêu cầu..." 
@@ -479,13 +479,13 @@ function TabNhapLieu({ data, setData, tuDongPhanBo, tuDongPhanBoMoi, addChuong, 
         </div>
       ))}
 
-      {/* Nút 'iều hư>ng */}
+      {/* Nút điều hướng */}
       <div className="flex justify-end mt-6">
         <button
           onClick={onNext}
           className="flex items-center gap-2 px-8 py-3 bg-indigo-600 text-white rounded-2xl font-black hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100 text-sm"
         >
-          Xem Ma trận 'ề <ChevronRight className="w-5 h-5" />
+          Xem Ma trận đề <ChevronRight className="w-5 h-5" />
         </button>
       </div>
     </motion.div>
@@ -578,7 +578,7 @@ function TabMaTran({ data, monHoc, countQuestions, totals, onPrev, onNext }: any
         </div>
       </div>
 
-      {/* Nút 'iều hư>ng */}
+      {/* Nút điều hướng */}
       <div className="flex justify-between mt-6">
         <button onClick={onPrev} className="flex items-center gap-2 px-6 py-2.5 border border-slate-200 rounded-2xl font-bold text-sm hover:bg-slate-50 transition-all text-slate-600">
           ◂ Nhập liệu
@@ -591,7 +591,7 @@ function TabMaTran({ data, monHoc, countQuestions, totals, onPrev, onNext }: any
             <FileJson className="w-4 h-4" /> Xuất Word (.doc)
           </button>
         <button onClick={onNext} className="flex items-center gap-2 px-8 py-3 bg-indigo-600 text-white rounded-2xl font-black hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100 text-sm">
-          Xem Ma trận 'ặc tả <ChevronRight className="w-5 h-5" />
+          Xem Ma trận đặc tả <ChevronRight className="w-5 h-5" />
         </button>
         </div>
       </div>
@@ -600,7 +600,7 @@ function TabMaTran({ data, monHoc, countQuestions, totals, onPrev, onNext }: any
 }
 
 function TabDacTa({ data, countQuestions, onPrev, onNext }: any) {
-  // Helper lấy yêu cầu cần 'ạt theo mức 'T
+  // Helper lấy yêu cầu cần đạt theo mức độ
   const getYeuCau = (tenBai: string, mIdx: number, yeuCauNhap: string): { text: string; isAuto: boolean } => {
     if (yeuCauNhap && yeuCauNhap.trim()) return { text: yeuCauNhap, isAuto: false };
     const found = findYeuCau(tenBai);
@@ -625,7 +625,7 @@ function TabDacTa({ data, countQuestions, onPrev, onNext }: any) {
             <span className="w-3 h-3 rounded-full bg-slate-200 inline-block"></span>Nhập tay
           </span>
           <span className="flex items-center gap-1.5 text-indigo-500">
-            <span className="w-3 h-3 rounded-full bg-indigo-100 border border-indigo-300 inline-block"></span>Tự 'Tng từ CSDL chuẩn
+            <span className="w-3 h-3 rounded-full bg-indigo-100 border border-indigo-300 inline-block"></span>Tự động từ CSDL chuẩn
           </span>
         </div>
       </div>
@@ -635,8 +635,8 @@ function TabDacTa({ data, countQuestions, onPrev, onNext }: any) {
           <tr className="bg-slate-900 text-white">
             <th className="border border-slate-700 p-3 w-12 text-center">STT</th>
             <th className="border border-slate-700 p-3 w-48">Nội dung</th>
-            <th className="border border-slate-700 p-3 w-28 text-center">Mức 'T</th>
-            <th className="border border-slate-700 p-3">Yêu cầu cần 'ạt</th>
+            <th className="border border-slate-700 p-3 w-28 text-center">Mức độ</th>
+            <th className="border border-slate-700 p-3">Yêu cầu cần đạt</th>
             <th className="border border-slate-700 p-3 w-20 text-center">NLC</th>
             <th className="border border-slate-700 p-3 w-20 text-center">Đúng/Sai</th>
             <th className="border border-slate-700 p-3 w-20 text-center">TL Ngắn</th>
@@ -668,13 +668,13 @@ function TabDacTa({ data, countQuestions, onPrev, onNext }: any) {
         </tbody>
       </table>
 
-      {/* Nút 'iều hư>ng */}
+      {/* Nút điều hướng */}
       <div className="flex justify-between mt-6">
         <button onClick={onPrev} className="flex items-center gap-2 px-6 py-2.5 border border-slate-200 rounded-2xl font-bold text-sm hover:bg-slate-50 transition-all text-slate-600">
           ◂ Ma trận
         </button>
         <button onClick={onNext} className="flex items-center gap-2 px-8 py-3 bg-indigo-600 text-white rounded-2xl font-black hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100 text-sm">
-          Tạo 'ề thi <ChevronRight className="w-5 h-5" />
+          Tạo đề thi <ChevronRight className="w-5 h-5" />
         </button>
       </div>
     </motion.div>
@@ -685,7 +685,7 @@ function TabTaoDe({ data, countQuestions, onPrev, monHoc = 'Toán' }: any) {
   const [exam, setExam] = useState<any[]>([]);
   const mathRef = useMathRender([exam]);
 
-  // Hàm sinh 'ề dựa trên dữ li?u từ Ma trận 'ặc tả
+  // Hàm sinh đề dựa trên dữ liệu từ Ma trận đặc tả
   const handleGenerateExam = () => {
 
     let globalStt = 1; // Số thứ tự câu hỏi xuyên suốt
@@ -695,7 +695,7 @@ function TabTaoDe({ data, countQuestions, onPrev, monHoc = 'Toán' }: any) {
     const part2_DS: any[] = [];
     const part3_TLN: any[] = [];
 
-    // Duy?t qua toàn bT dữ li?u người dùng 'ã nhập
+    // Duyệt qua toàn bộ dữ liệu người dùng đã nhập
     data.forEach((chuong: any) => {
       chuong.noiDungs.forEach((nd: any) => {
         // --- PHẦN I: TRẮC NGHIỆM NHIỀU PHƯƠNG ÁN (NLC) ---
@@ -756,15 +756,15 @@ function TabTaoDe({ data, countQuestions, onPrev, monHoc = 'Toán' }: any) {
 
   return (
     <div className="space-y-6" ref={mathRef as any}>
-      {/* Header 'iều khifn */}
+      {/* Header điều khiển */}
       <div className="bg-white p-8 rounded-3xl border border-slate-200 flex justify-between items-center shadow-lg">
         <div>
           <h2 className="text-xl font-black flex items-center gap-2">
             <Sparkles className="text-indigo-600" />
-            Sinh 'ề từ Ma trận 'ặc tả
+            Sinh đề từ Ma trận đặc tả
           </h2>
           <p className="text-xs text-slate-400 mt-1">
-            Câu hỏi 'ược chọn lọc chính xác theo: {data.reduce((acc, c) => acc + c.noiDungs.length, 0)} 'ơn v< kiến thức 'ã thiết lập.
+            Câu hỏi được chọn lọc chính xác theo: {data.reduce((acc, c) => acc + c.noiDungs.length, 0)} đơn vị kiến thức đã thiết lập.
           </p>
         </div>
         <div className="flex gap-3">
@@ -840,7 +840,7 @@ function ExamContent({ exam }: { exam: any[] }) {
         <section className="mb-10">
           <h4 className="font-bold mb-4 flex items-center gap-2 text-base">
             <span className="bg-slate-900 text-white px-3 py-1 rounded-lg text-xs">PHẦN II</span>
-            Câu trắc nghi?m 'úng sai.
+            Câu trắc nghiệm đúng sai.
           </h4>
           {p2.map(q => (
             <div key={q.id} className="mb-8 p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
@@ -875,7 +875,7 @@ function ExamContent({ exam }: { exam: any[] }) {
                   <span className="text-[9px] text-slate-400 ml-2">({q.mucDo})</span>
                 </p>
                 <div className="mt-2 h-8 w-32 border-b-2 border-dashed border-slate-300 flex items-end pb-1 text-xs text-slate-300">
-                  Đáp s': ................
+                  Đáp số: ................
                 </div>
               </div>
             ))}
