@@ -3,12 +3,12 @@
  * Math Matrix Pro - Phiên bản chuẩn hóa 2026
  */
 
-import React, { useState, useEffect } from 'react';
-import { PenSquare, FileText, Download, Plus, Trash2, ChevronRight, Sparkles, RefreshCw, CheckCircle, X, BookOpen, Layout, ListChecks, FileJson } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { PenSquare, Download, Plus, Trash2, ChevronRight, Sparkles, RefreshCw, X, BookOpen, Layout, ListChecks, FileJson } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { pickNLCQuestion, pickDSQuestion, pickTLNQuestion, type DSQuestion } from './questionBank';
 import { findYeuCau, getAllTopics } from './yeuCauCanDat';
-import { exportMatrixWord, exportSpecMatrixWord, exportExamWord } from './exportWord';
+import { exportMatrixWord, exportExamWord } from './exportWord';
 import { useMathRender } from './MathText';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
